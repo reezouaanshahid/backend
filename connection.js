@@ -1,15 +1,22 @@
-const http = require('http');
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
 
 http.createServer(function (req, res) {
-    let data = [1, 2, 3, 4, 5, 6, 7];
-    let out = ``;
-    for (let i = 0; i < data.length; i++) {
-        const item = data[i];
-
-        out += `
-        <h1>${item}</h1>
-        <img src='/pic.jpg'/>
-        `;
-    }
-    res.end(out);
+  var q = url.parse(req.url, true);
+  var filename = "." + q.pathname;
+  fs.readFile(filename, function(err, data) {
+    if (err) {
+      res.writeHead(404, {'Content-Type': 'text/html'});
+      return res.end("404 Not Found");
+    } 
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    
+    fs.appendFile('mynewfile12.txt', 'Hello content!', function (err) {
+        if (err) throw err;
+        console.log('Saved!');
+      });
+    return res.end();
+  });
 }).listen(8080);
