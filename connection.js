@@ -13,7 +13,7 @@ http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     
-    fs.appendFile('mynewfile12.txt', 'Hello content!', function (err) {
+    fs.appendFile('v', 'Hello content!', function (err) {
         if (err) throw err;
         console.log('Saved!');
       });
