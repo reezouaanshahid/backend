@@ -1,22 +1,41 @@
-var http = require('http');
-var url = require('url');
-var fs = require('fs');
+const express = require('express')
+const app = express()
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+let data=[{id:1,name:"ibad"},{
+  id:2,name:"qureshi"
+}];
+app.get('/', (req, res) => {
+   const bodymy=req.body;
+   console.log(bodymy);
 
-http.createServer(function (req, res) {
-  var q = url.parse(req.url, true);
-  var filename = "." + q.pathname;
-  fs.readFile(filename, function(err, data) {
-    if (err) {
-      res.writeHead(404, {'Content-Type': 'text/html'});
-      return res.end("404 Not Found");
-    } 
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(data);
+    res.send(data)
+  })
+  app.post('/user', (req, res) => {
+    const bodyData = req.body;
     
-    fs.appendFile('v', 'Hello content!', function (err) {
-        if (err) throw err;
-        console.log('Saved!');
-      });
-    return res.end();
-  });
-}).listen(8080);
+        console.log(bodyData);
+    data.push(bodyData)
+    res.send(data)
+  })
+  app.get('*', (req, res)=>{
+  res.send('this path doesnot exist')
+  })
+  app.delete('/delete',(req,res)=>{
+    const bodyData = req.body;
+    console.log(bodyData);
+    data = data.filter(item => item.id !== bodyData.id);
+
+console.log(data);
+    res.send("User deleted!")
+  })
+  app.post('/serach',(req,res)=>{
+    const bodyData = req.body;
+    const filtered = data.filter(item =>
+      item.name.toLowerCase().includes(bodyData.name.toLowerCase())
+    );
+
+console.log(filtered);
+    res.send(filtered)
+  })
+  app.listen(3000)
